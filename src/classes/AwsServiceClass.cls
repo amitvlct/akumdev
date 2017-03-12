@@ -1,3 +1,4 @@
+// Created For AWS
 @RestResource(urlMapping='/myservice')
 global class AwsServiceClass {
     @HttpPost
