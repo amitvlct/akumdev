@@ -1,10 +1,13 @@
+//wrapper
 public class wrapperClassController {
-
+   
     //Our collection of the class/wrapper objects cContact 
     public List<cContact> contactList {get; set;}
-
+    public boolean blockShowFirst {get; set;}
+    
     //This method uses a simple SOQL query to return a List of Contacts
     public List<cContact> getContacts() {
+    
         if(contactList == null) {
             contactList = new List<cContact>();
             for(Contact c: [select Id, Name, Email, Phone from Contact limit 10]) {
@@ -17,8 +20,7 @@ public class wrapperClassController {
 
 
     public PageReference processSelected() {
-
-                //We create a new list of Contacts that we be populated only with Contacts if they are selected
+        //We create a new list of Contacts that we be populated only with Contacts if they are selected
         List<Contact> selectedContacts = new List<Contact>();
 
         //We will cycle through our list of cContacts and will check to see if the selected property is set to true, if it is we add the Contact to the selectedContacts list
