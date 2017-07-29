@@ -1,5 +1,4 @@
 <apex:page>
-<!DOCTYPE html>
 <html ng-app>
 <head>
 <title>Simple app</title>
