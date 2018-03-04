@@ -3,4 +3,4 @@ public class MapQuestImpl implements GeocodeService{
         // Web service callout
         return new List<Double>{1,1};
     }
-} 
+}

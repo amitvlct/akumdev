@@ -1,4 +1,4 @@
 <aura:application extends="force:slds">
-    <c:testWrapper/>
+    <c:testWrapper />
 <!-- here c: is org. default namespace prefix-->
 </aura:application>

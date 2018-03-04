@@ -3,4 +3,4 @@ public class GoogleMapsImpl implements GeocodeService{
         // Web service callout
         return new List<Double>{0,0};
     }
-} 
+}
