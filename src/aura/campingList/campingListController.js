@@ -1,46 +1,35 @@
-({
-	clickCreateItem : function(component, event, helper) {
+({  
+clickCreateItem : function(component, event, helper) {
+  
+        // Create a new Expense, if it is valid
+        var newItem = component.get("v.newItem");
+        console.log(':::Below New item');
+       var newItemRef = component.get("v.newItem");
+       console.log("Create Camping Item: " + JSON.stringify(newItemRef));
+        helper.createItem(component, newItem);
 
-        //  check for validation
-        var checkField = component.find("itemform").reduce(function (validSoFar, inputCmp) {
-            // Displays error messages for invalid fields
-            inputCmp.showHelpMessageIfInvalid();
-            return validSoFar && inputCmp.get('v.validity').valid;
-        }, true);
+},
 
+// Load expenses from Salesforce
+doInit: function(component, event, helper) {
 
+// Create the action (remote method call)
+var action = component.get("c.getItems");
 
-        if (checkField)
-        {
-            //  gets refernce to view's newItem attribute
-            var newItemRef = component.get("v.newItem");
-            console.log("Create Camping Item: " + JSON.stringify(newItemRef));
-            
-            
-            // **** begin helper class code ****
-            // note that i originally created helper class to perform the logic below
-            // but it appears as though the challenge is expecting you NOT to use helper class
-            // which would be why i was getting challenge error while using it
-            var theItems = component.get("v.items");
- 
-            // Copy the expense to a new object
-            // THIS IS A DISGUSTING, TEMPORARY HACK
-            var newItem = JSON.parse(JSON.stringify(newItemRef));    
-            theItems.push(newItem);
-            component.set("v.items", theItems);
-            //  *******  end helper class code *********
-            
-            //  this will reset the view's newItem object 
-            //  to a be a blank sobject of type Camping_Item__c
-           
-            component.set("v.newItem", 
-                          {'sobjectType' : 'Camping_Item__c',
-                           'Name' : '',
-                           'Quantity__c' : 0,
-                           'Price__c' : 0,
-                           'Packed__c' : false});
-                           
-        }
-        
-	}
+// Add callback behavior for when response is received
+action.setCallback(this, function(response) {
+    var state = response.getState();
+    if (component.isValid() && state === "SUCCESS") {
+        component.set("v.items", response.getReturnValue());
+    }
+    else {
+        console.log("Failed with state: " + state);
+        console.log(response + " ");
+    }
+});
+
+    // Send action off to be executed (server request)
+    $A.enqueueAction(action);
+},
+
 })
