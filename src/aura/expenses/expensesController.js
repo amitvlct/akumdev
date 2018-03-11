@@ -1,29 +1,34 @@
-({
-    clickCreate: function(component, event, helper) {
-        //console.log(component.find('expenseform'));
-        var validExpense = component.find('expenseform').reduce(function (validSoFar, inputCmp) {
-            // Displays error messages for invalid fields
-            inputCmp.showHelpMessageIfInvalid();
-            console.log('in:::');
-            console.log(validSoFar && inputCmp.get('v.validity').valid);
-            return validSoFar && inputCmp.get('v.validity').valid;
-        }, true);
-        // If we pass error checking, do some real work
-        if(validExpense){
-            // Create the new expense
-            var newExpense = component.get("v.newExpense");
-            console.log("Create expense: " + JSON.stringify(newExpense));
-            var theExpenses = component.get("v.expenses");
- 
-        // Copy the expense to a new object
-        // THIS IS A DISGUSTING, TEMPORARY HACK
-        var newExpense = JSON.parse(JSON.stringify(expense));
- 
-        console.log("Expenses before 'create': " + JSON.stringify(theExpenses));
-        theExpenses.push(newExpense);
-        component.set("v.expenses", theExpenses);
-        console.log("Expenses after 'create': " + JSON.stringify(theExpenses));
-            
-        }
+({  
+clickCreateExpense : function(component, event, helper) {
+
+    if(helper.validateExpenseForm(component)) {
+        // Create a new Expense, if it is valid
+        var newExpense = component.get("v.newExpense");
+        console.log(newExpense);
+        helper.createExpense(component, newExpense);
     }
+},
+
+// Load expenses from Salesforce
+doInit: function(component, event, helper) {
+
+// Create the action (remote method call)
+var action = component.get("c.getExpenses");
+
+// Add callback behavior for when response is received
+action.setCallback(this, function(response) {
+    var state = response.getState();
+    if (component.isValid() && state === "SUCCESS") {
+        component.set("v.expenses", response.getReturnValue());
+    }
+    else {
+        console.log("Failed with state: " + state);
+        console.log(response + " ");
+    }
+});
+
+    // Send action off to be executed (server request)
+    $A.enqueueAction(action);
+},
+
 })
